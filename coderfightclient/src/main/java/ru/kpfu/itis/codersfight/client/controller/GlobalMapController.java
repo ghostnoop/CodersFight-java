@@ -11,6 +11,8 @@ import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import ru.kpfu.itis.codersfight.client.model.Question;
@@ -21,6 +23,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GlobalMapController implements Initializable {
+    public Label moveLabel;
+
     public Button img00;
     public Button img10;
     public Button img20;
@@ -36,10 +40,14 @@ public class GlobalMapController implements Initializable {
 
     public AnchorPane questionLayout;
     public Label titleLabel;
+    public Label textLabel;
     public Button ans1;
     public Button ans2;
     public Button ans3;
     public Button ans4;
+
+    public AnchorPane waitingLoader;
+    public ProgressIndicator pb;
 
 
     private String[] enumStatus = new String[]{
@@ -57,8 +65,8 @@ public class GlobalMapController implements Initializable {
             SocketService socketService = SocketService.getInstance();
             try {
                 terrainArray = socketService.getStartGameMap();
-                isYourStage = socketService.whoseStage();
-                System.out.println("stage: "+isYourStage);
+                updateUI();
+
 
                 Platform.runLater(() -> {
                     updateMap();
@@ -99,6 +107,51 @@ public class GlobalMapController implements Initializable {
         }).start();
     }
 
+    private void waitAnswer() {
+        new Thread(() -> {
+            SocketService socketService = SocketService.getInstance();
+            try {
+                socketService.waitBackFromServer();
+                terrainArray = socketService.getGameMap();
+                updateUI();
+
+
+                Platform.runLater(() -> {
+                    backToMap();
+                    waitingLoader.setVisible(false);
+                    updateMap();
+                    if (!isYourStage)
+                        waitStage();
+                });
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }).start();
+    }
+
+    private void backToMap() {
+        questionLayout.setVisible(false);
+
+    }
+
+    private void updateUI() throws IOException {
+        SocketService socketService = SocketService.getInstance();
+        isYourStage = socketService.whoseStage();
+        System.out.println("stage: " + isYourStage);
+        Platform.runLater(() -> {
+
+
+            if (isYourStage)
+                moveLabel.setText("Your move");
+            else
+                moveLabel.setText("Enemy move");
+        });
+    }
+
     private void updateMap() {
         int k = 1;
         for (int i = 0; i < terrainArray.length; i++) {
@@ -114,19 +167,19 @@ public class GlobalMapController implements Initializable {
     }
 
 
-
-
     private void imagesClickHandlers() {
         int k = 0;
         SocketService socketService = SocketService.getInstance();
 
         for (Button imageView : imageViews) {
+            int finalK = k;
             imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
                 try {
                     if (isYourStage) {
-                        socketService.sendMessage("/attack " + imageView.getId());
+                        socketService.sendMessage("/attack " + finalK);
                         String msg = socketService.waitQuestion();
                         getQuestion(msg);
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -135,6 +188,7 @@ public class GlobalMapController implements Initializable {
                 imageView.setDisable(true);
                 event.consume();
             });
+            k++;
         }
     }
 
@@ -153,10 +207,35 @@ public class GlobalMapController implements Initializable {
     private void setGameQuestion(Question question) {
         questionLayout.setVisible(true);
         titleLabel.setText(question.getTitle());
+        textLabel.setText(question.getText());
         String[] answers = question.getAnswers();
-        ans1.setText(answers[0]);
-        ans2.setText(answers[1]);
-        ans3.setText(answers[2]);
-        ans4.setText(answers[3]);
+        Button[] answersButtons = new Button[]{
+                ans1, ans2, ans3, ans4
+        };
+        int index = 0;
+        SocketService socketService = SocketService.getInstance();
+        for (Button answerButton : answersButtons) {
+            answerButton.setText(answers[index]);
+            int finalIndex = index;
+            answerButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+                System.out.println("index key :"+finalIndex);
+                try {
+                    socketService.sendMessage("/answer " + finalIndex);
+                    waitAnswer();
+//                    todo set progress bar menu
+                    Platform.runLater(()->{
+                        pb.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                        waitingLoader.setVisible(true);
+                    });
+
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                event.consume();
+            });
+            index++;
+        }
     }
 }

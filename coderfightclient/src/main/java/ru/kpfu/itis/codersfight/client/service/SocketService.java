@@ -50,6 +50,16 @@ public class SocketService {
         return mapper.readValue(msg, Integer[].class);
     }
 
+    public void waitBackFromServer() {
+        try {
+            while (true) {
+                String msg = in.readUTF();
+                return;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public boolean whoseStage() throws IOException {
@@ -63,7 +73,7 @@ public class SocketService {
         while (true) {
             System.out.println("tut2");
             String response = in.readUTF();
-            System.out.println("mess: "+response);
+            System.out.println("mess: " + response);
             return response;
         }
     }

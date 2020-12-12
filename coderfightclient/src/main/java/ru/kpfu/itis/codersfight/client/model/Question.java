@@ -12,6 +12,6 @@ import lombok.Setter;
 @Setter
 public class Question {
     private String title;
+    private String text;
     private String[] answers;
-    private String rightAnswer;
 }
