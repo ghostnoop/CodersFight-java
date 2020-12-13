@@ -1,0 +1,12 @@
+ru\kpfu\itis\codersfight\client\controller\QueueController.class
+ru\kpfu\itis\codersfight\client\model\Question.class
+ru\kpfu\itis\codersfight\client\window\WindowManager.class
+ru\kpfu\itis\codersfight\client\service\SocketService.class
+ru\kpfu\itis\codersfight\client\renders\CellRender.class
+ru\kpfu\itis\codersfight\client\controller\GlobalMapController.class
+ru\kpfu\itis\codersfight\client\Main.class
+ru\kpfu\itis\codersfight\client\controller\ChatController.class
+ru\kpfu\itis\codersfight\client\controller\LoginController.class
+ru\kpfu\itis\codersfight\client\test.class
+ru\kpfu\itis\codersfight\client\test$1.class
+ru\kpfu\itis\codersfight\client\renders\CellRender$1.class

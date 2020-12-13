@@ -1,0 +1,3 @@
+What is a correct syntax to output "Hello World" in Java?:: ::Console.WriteLine("Hello World");::echo("Hello World");::System.out.println("Hello World");::print("Hello World");::2
+Java is short for "JavaScript".:: ::True::False::It's framework::Father::1
+How do you insert COMMENTS in Java code?:: ::#:://::/*::<!--->::1

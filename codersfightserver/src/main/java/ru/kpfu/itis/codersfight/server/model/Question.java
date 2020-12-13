@@ -28,6 +28,14 @@ public class Question {
         this.answers = answers;
         this.rightAnswer = rightAnswer;
     }
+    public Question(String[] args){
+        this.title=args[0];
+        this.text=args[1];
+        this.answers=new String[]{
+                args[2],args[3],args[4],args[5]
+        };
+        this.rightAnswer=Integer.parseInt(args[6]);
+    }
 
     public boolean checkAnswer(int answer) {
         return answer==rightAnswer;

@@ -3,7 +3,10 @@ package ru.kpfu.itis.codersfight.server.server;
 import lombok.SneakyThrows;
 import ru.kpfu.itis.codersfight.server.handler.ClientHandler;
 import ru.kpfu.itis.codersfight.server.service.AuthenticationService;
+import ru.kpfu.itis.codersfight.server.service.GameService;
+import ru.kpfu.itis.codersfight.server.service.QuestionsCreator;
 import ru.kpfu.itis.codersfight.server.task.AuthenticationTask;
+import ru.kpfu.itis.codersfight.server.task.GameTask;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -23,6 +26,8 @@ public class Server extends Thread {
     @Override
     public void run() {
         try {
+            QuestionsCreator.setQuestions("/quiz.csv");
+
             ServerSocket serverSocket = new ServerSocket(8080);
             while (true) {
                 socket = serverSocket.accept();
@@ -42,18 +47,23 @@ public class Server extends Thread {
             System.out.println("tut");
             ClientHandler oldClientHandler = queueClients.poll();
 
-            clientHandler.setEnemyClient(oldClientHandler);
-            oldClientHandler.setEnemyClient(clientHandler);
+            assert oldClientHandler != null;
+
+            GameTask gameTask = new GameTask(
+                    oldClientHandler,
+                    clientHandler
+            );
+            oldClientHandler.setGameTask(gameTask);
+            clientHandler.setGameTask(gameTask);
+
 
             oldClientHandler.start();
             clientHandlers.add(oldClientHandler);
-            oldClientHandler.setPositionOnMap(0);
-            oldClientHandler.setYourStage(false);
+
 
             clientHandler.start();
             clientHandlers.add(clientHandler);
-            clientHandler.setPositionOnMap(1);
-            clientHandler.setYourStage(true);
+
 
             oldClientHandler.sendMsg("/foundgame");
             clientHandler.sendMsg("/foundgame");

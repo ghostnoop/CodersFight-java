@@ -34,6 +34,15 @@ public class SocketService {
         out.writeUTF(msg);
     }
 
+    public void disconnect() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public Integer[] getGameMap() throws IOException {
         sendMessage("/getmap");
         String msg = in.readUTF();
@@ -50,15 +59,14 @@ public class SocketService {
         return mapper.readValue(msg, Integer[].class);
     }
 
-    public void waitBackFromServer() {
+    public int waitBackFromServer() {
         try {
-            while (true) {
-                String msg = in.readUTF();
-                return;
-            }
+            String msg = in.readUTF();
+            return Integer.parseInt(msg.split("/backmap ")[1].trim());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return -1;
     }
 
 

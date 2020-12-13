@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import ru.kpfu.itis.codersfight.client.Main;
 import ru.kpfu.itis.codersfight.client.controller.ChatController;
 import ru.kpfu.itis.codersfight.client.controller.GlobalMapController;
 import ru.kpfu.itis.codersfight.client.controller.QueueController;
@@ -49,9 +50,20 @@ public class WindowManager {
 //        scene.getStylesheets().add(WindowManager.class.getResource("/css/listView.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Queue");
-        primaryStage.setResizable(true);
-        primaryStage.setMinHeight(450);
-        primaryStage.setMinWidth(650);
+        primaryStage.setResizable(false);
+        primaryStage.setMinHeight(900);
+        primaryStage.setMinWidth(1280);
+        primaryStage.show();
+    }
+    public static void renderLoginWindow(Stage primaryStage) throws IOException {
+        Main.primaryStage = primaryStage;
+        FXMLLoader loader = new FXMLLoader();
+        Parent root = loader.load(WindowManager.class.getResourceAsStream("/fxml/login.fxml"));
+        primaryStage.setTitle("Login");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setResizable(false);
+        primaryStage.setMinHeight(900);
+        primaryStage.setMinWidth(1280);
         primaryStage.show();
     }
 

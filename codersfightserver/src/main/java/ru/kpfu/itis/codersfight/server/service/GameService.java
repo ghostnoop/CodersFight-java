@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 public class GameService {
-
-
     public static Integer[] getGameMap(int positionOnMap) {
         if (positionOnMap == 0) {
             return new Integer[]{
